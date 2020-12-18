@@ -1,0 +1,494 @@
+--Question 1-What effect does the background education (specifically post-secondary degree) of the startup members have on the success of the start-up?
+
+--Label 1
+--This view is used to combine the information from people, degree and startup tables and get affiliation_name of the company that the members work in, degree type, entity_id and person_id
+
+--Label 2
+--This view is used to get the total amount of money invested in each company from different funding rounds. 
+
+--Label 3
+--This query is used to calculate the average money invested in companies
+
+
+--Label 4
+--This view is used to combine the information about the amount of money invested in a company and the people that work in the company.
+
+
+--Label 5
+--This view categorizes companies based on how much money was invested in the company. If the amount of money invested in the company is greater than  $18673046, then this company is categorized as "Above average" and if the money invested is less than $18673046 then this company is categorized as "Below average". 
+
+
+--Label 6
+select degree_type,count(success) as people,success from AboveBelowAverage  group by degree_type,success having count(*)>5;
+
+ degree_type | people |    success
+-------------+--------+---------------
+ BA          |     39 | Above Average
+ BA          |     35 | Below Average
+ BS          |     49 | Above Average
+ BS          |     46 | Below Average
+ MBA         |     18 | Above Average
+ MBA         |     16 | Below Average
+ MS          |     26 | Above Average
+ MS          |     10 | Below Average
+ PhD         |      9 | Above Average
+ PhD         |      6 | Below Average
+(10 rows)
+
+
+
+
+
+
+----------------------------------------------------------------------------------
+
+--EXTENSION QUESTIONS --
+
+--1. Which post-secondary majors lead to the greatest number of successful startups
+
+--Label 7
+--This view is used to combine the information from people, degree and startup tables and get affiliation_name of the company that the members work in, degree subject, entity_id and person_id
+
+--Label 8
+--This view is used to get the total amount of money invested in each company from different funding rounds. 
+
+
+--Label 9
+--This view is used to combine the information about the amount of money invested in a company and the people that work in the company.
+
+
+--Label 10
+--This view categorizes companies based on how much money was invested in the company. If the amount of money invested in the company is greater than  $18673046, then this company is categorized as "Above average" and if the money invested is less than $18673046 then this company is categorized as "Below average". 
+
+--Label 11
+--This query is used to get the startups that are above average and combine it with the number of members with a certain post-secondary major 
+
+
+select subject,count(success) as numberOfPeople,success
+from AboveBelowAverage2 where success='Above Average'
+group by subject,success having count(*)>3 order by numberOfPeople;
+
+
+        subject         | numberofpeople |    success
+------------------------+----------------+---------------
+ History                |              4 | Above Average
+ Business               |              5 | Above Average
+ Economics              |              6 | Above Average
+ Electrical Engineering |              9 | Above Average
+ Computer Science       |             21 | Above Average
+(5 rows)
+
+
+
+--2. Do startup members work in companies that are similar to the subject area they got their degree in? Specifically we are checking for companies related to the web.
+
+--Label 12
+--This query is used to find the number of members from different degree subjects that work in a web-based company
+
+
+select distinct subject,category_code,count(subject)
+from startups, people as c, degrees
+where c.person_id=degrees.person_id and startups.affiliation_name=c.affiliation_name and category_code='web' group by subject,category_code 
+having count(*)>2 
+order by count ;
+
+        subject         | category_code | count
+------------------------+---------------+-------
+ Finance                | web           |     3
+ MBA                    | web           |     3
+ Mathematics            | web           |     3
+ Symbolic Systems       | web           |     3
+ Economics              | web           |     5
+ Electrical Engineering | web           |     6
+ Business               | web           |     8
+ Computer Science       | web           |    24
+
+
+ 
+
+--Question 2-What aspects(city,company type) lead to a successful start-up capable of being acquired?
+
+--Label 13
+--This query is used to find the number of startups acquired based on the city the startup was founded in
+
+
+select city,count(city) as NumOfPeople
+from offices as o,startups
+where o.entity_id=startups.entity_id and  status='acquired' group by city having count(*)>3 order by NumOfPeople;
+     city      | numofpeople
+---------------+-------------
+ Cambridge     |           4
+ San Diego     |           4
+ Sunnyvale     |           5
+ London        |           5
+ Menlo Park    |           5
+ Los Angeles   |           5
+ Palo Alto     |           5
+ San Mateo     |           5
+ Mountain View |           7
+ Seattle       |           8
+ New York      |          10
+ San Francisco |          35
+(12 rows)
+
+
+
+--Label 14
+--This query is used to find number of startups acquired based on the category_code of the startup
+
+select category_code,count(category_code) as NumOfPeople
+from offices as o,startups
+where o.entity_id=startups.entity_id and  status='acquired'
+group by category_code
+order by NumOfPeople;
+  category_code   | numofpeople
+------------------+-------------
+ music            |           1
+ security         |           1
+ photo_video      |           1
+ finance          |           1
+ hardware         |           1
+ software         |           2
+ news             |           2
+ public_relations |           3
+ social           |           3
+ messaging        |           3
+ search           |           6
+ ecommerce        |           7
+ enterprise       |           8
+ network_hosting  |           8
+ mobile           |          11
+ advertising      |          11
+ games_video      |          20
+ web              |          74
+(18 rows)
+
+
+
+----------------------------------------------------------------------------------
+
+--EXTENSION QUESTIONS --
+--1. What aspects(city, company type) led to a closure of a start-up?
+
+
+--Label 15
+--This query is used to find the number of startups closed down based on the city the startup was founded in
+
+
+
+
+select city,count(city) as NumOfPeople
+from offices as o,startups
+where o.entity_id=startups.entity_id and  status='closed' group by city having count(*)>2 order by NumOfPeople;
+     city      | numofpeople
+---------------+-------------
+ Mountain View |           3
+ Los Angeles   |           4
+ Palo Alto     |           4
+ San Francisco |           9
+(4 rows)
+
+
+--Label 16
+--This query is used to find number of startups closed down based on the category_code of the startup
+
+
+select category_code,count(category_code) 
+from offices as o,startups 
+where o.entity_id=startups.entity_id and  status='closed' 
+group by category_code 
+order by count;
+
+  category_code   | count
+------------------+-------
+ network_hosting  |     1
+ enterprise       |     1
+ public_relations |     1
+ consulting       |     1
+ advertising      |     1
+ search           |     2
+ mobile           |     2
+ ecommerce        |     5
+ games_video      |    13
+ web              |    26
+(10 rows)
+
+
+
+--Question 3 - Which investors consistently make the right decisions to invest in startups that ended up being successful?
+
+--Label 17
+--The startups that had an IPO, essentially the startups who were "successful"
+
+--Label 18
+--All the startups where they were acquired 
+
+--Label 19
+--All the startups that were either acquired or have an IPO
+
+--Label 20
+--The investors that had invested any money into the successful startups
+
+
+--Label 21
+--The investors, startups, and the amount that the investors invested into the startups at various funding rounds
+
+--Label 22
+--Grouping by the investors, finding the investors, the amount of "successful" startups they invested, as well as how much money was invested
+
+--Label 23
+--The investors, as well as the investor name
+
+--Label 24
+--The investor, investor name, the amount of successful startups they invested in, and total amount invested
+
+investor_object_id | count |    sum    |           affiliation_name           
+--------------------+-------+-----------+--------------------------------------
+ f:17               |    17 | 222500000 | Sequoia Capital
+ f:1                |    12 | 139600000 | Greylock Partners
+ f:26               |    11 | 104350000 | Draper Fisher Jurvetson (DFJ)
+ f:29               |    10 |  42600000 | First Round Capital
+ f:61               |    10 | 128700000 | Mayfield Fund
+ f:42               |     9 | 111300000 | Bessemer Venture Partners
+ f:80               |     7 |  61800000 | Walden Venture Capital
+ f:242              |     7 |  47700000 | Draper Richards
+ f:48               |     7 |  96100000 | Benchmark
+ f:36               |     6 | 240000000 | Goldman Sachs
+ f:18               |     6 |  89800000 | Index Ventures
+ f:34               |     6 | 100500000 | Spark Capital
+ f:45               |     6 |  30400000 | Union Square Ventures
+ f:62               |     5 |  58200000 | Ignition Partners
+ f:41               |     4 |  49700000 | Kleiner Perkins Caufield & Byers
+ f:50               |     4 |  29800000 | Labrador Ventures
+ f:2                |     4 |  59300000 | Omidyar Network
+ f:6                |     4 |  42000000 | Founders Fund
+ f:507              |     4 |  77000000 | General Catalyst Partners
+ f:3                |     4 |  52500000 | Trinity Ventures
+ f:166              |     4 |  34000000 | Lehman Brothers
+ f:13               |     4 |  33200000 | Redpoint Ventures
+ f:134              |     4 |  45950000 | Menlo Ventures
+ f:123              |     3 |  16000000 | Highland Capital Partners
+ f:7                |     3 |  22000000 | Charles River Ventures
+ f:180              |     3 |  22000000 | Prism Venture Management
+ f:183              |     3 |  32700000 | Integral Capital Partners
+ f:204              |     3 |  11900000 | Alloy Ventures
+ f:214              |     3 |  24900000 | SoftBank Capital
+ f:66               |     3 |  33200000 | Khosla Ventures
+ f:73               |     3 |  26000000 | Trident Capital
+ f:235              |     3 | 100400000 | TransCosmos
+ f:74               |     3 |   4500000 | True Ventures
+ f:77               |     3 |  17000000 | DEFTA Partners
+ f:262              |     3 |  44000000 | DAG Ventures
+ f:79               |     3 |  17000000 | Edmond de Rothschild Venture Capital
+ f:24               |     3 |  32000000 | August Capital
+ f:86               |     3 |  26200000 | Norwest Venture Partners
+ f:144              |     3 |   7700000 | NSV
+ f:89               |     3 |  20600000 | Madrona Venture Group
+ f:90               |     3 |  20600000 | WRF Capital
+ f:532              |     3 |   5400000 | Milestone Venture Partners
+ f:139              |     3 | 124500000 | Allen & Company
+ f:172              |     3 |   5000000 | Shea Ventures
+ f:101              |     3 |  32000000 | BlueRun Ventures
+ f:105              |     3 |  19100000 | Balderton Capital
+ f:4                |     3 |  80000000 | Accel Partners
+ f:37               |     3 |  57250000 | Shelter Capital Partners
+ f:38               |     3 |  44000000 | Liberty Associated Partners
+ f:168              |     3 |  30500000 | Bezos Expeditions
+ f:169              |     3 |  45500000 | Baker Capital
+ f:173              |     2 |  25000000 | Shasta Venture
+f:63               |     2 |  25000000 | Reed Elsevier Ventures
+ f:91               |     2 |  19100000 | Sutter Hill Ventures
+ f:92               |     2 |  17100000 | Pinnacle Ventures
+ f:190              |     2 |  12000000 | Brightspark Ventures
+ f:118              |     2 |  31000000 | ARTIS Ventures
+ f:68               |     2 |  13200000 | Jesselson Capital
+ f:67               |     2 |  13200000 | ZG Ventures
+ f:30               |     2 |  21000000 | Mangrove Capital Partners
+ f:248              |     2 |  25000000 | Morgenthaler Ventures
+ f:94               |     2 |   7000000 | Lightspeed Venture Partners
+ f:32               |     2 |   8250000 | Atomico
+ f:146              |     2 |  36000000 | Jafco Ventures
+ f:111              |     2 |  19500000 | Atlas Venture
+ f:64               |     2 |  26000000 | Flybridge Capital Partners
+ f:83               |     2 |  12800000 | Columbia Capital
+ f:145              |     2 |   7200000 | Red Rock Ventures
+ f:99               |     2 |  10000000 | Pitango Venture Capital
+ f:28               |     2 |   2400000 | Village Ventures
+ f:112              |     2 |  19800000 | Selby Venture Partners
+ f:438              |     2 |  10000000 | Veritas Venture Partners
+ f:35               |     2 |  42500000 | The Tornante Company
+ f:446              |     2 |   8200000 | Felicis Ventures
+ f:453              |     2 |    700000 | eonBusiness
+ f:549              |     1 |   3200000 | Ingenious Media
+ f:23               |     1 |  12500000 | Foundation Capital
+ f:25               |     1 |   7000000 | Mobius Venture Capital
+ f:46               |     1 |  15000000 | Fidelity Ventures
+ f:52               |     1 |   3000000 | Tapuz
+ f:55               |     1 |   4000000 | Minor Ventures
+ f:65               |     1 |   6000000 | Dawntreader Ventures
+ f:69               |     1 |  10600000 | GrowthWorks Capital
+ f:75               |     1 |    500000 | Radar Partners
+ f:76               |     1 |    500000 | Winton Partners
+ f:81               |     1 |   5350000 | Updata Partners
+ f:82               |     1 |   5350000 | IDEA Fund Partners
+ f:84               |     1 |  44000000 | Legg Mason
+ f:87               |     1 |  15000000 | Leader Ventures
+ f:88               |     1 |  15000000 | Saints Capital
+ f:93               |     1 |  12100000 | PAR Capital Management
+ f:95               |     1 |   9500000 | Partech Ventures
+ f:96               |     1 |    500000 | Baseline Ventures
+ f:102              |     1 |  15000000 | Catamount Ventures
+ f:109              |     1 |   6200000 | Cambrian Ventures
+ f:110              |     1 |   7000000 | The Accelerator Group
+ f:113              |     1 |  12000000 | Crosslink Capital
+ f:116              |     1 |  20000000 | Mohr Davidow Ventures
+ f:120              |     1 |   7000000 | Clearstone Venture Partners
+ f:121              |     1 |   7000000 | Opus Capital
+ f:124              |     1 |   1250000 | Second Avenue Partners
+ f:130              |     1 |   7000000 | VantagePoint Capital Partners
+ f:148              |     1 |   1500000 | Garage Technology Ventures
+ f:154              |     1 |   5000000 | HarbourVest Partners
+ f:165              |     1 |   7000000 | Angel Investment Partners
+ f:177              |     1 |  34000000 | IDInvest Partners
+ f:179              |     1 |   4000000 | Blueprint Ventures
+ f:192              |     1 |  11000000 | US Venture Partners
+ f:195              |     1 |   6000000 | Wellington Partners
+ f:205              |     1 |  59500000 | AllianceBernstein
+ f:215              |     1 |  10000000 | Canaan Partners
+ f:223              |     1 |   5000000 | GE Commercial Finance
+ f:224              |     1 |  59500000 | Brookside Capital
+ f:225              |     1 |  59500000 | Maverick Capital
+ f:231              |     1 |   8500000 | Idealab
+ f:236              |     1 |  36000000 | Audax Ventures
+ f:237              |     1 |  36000000 | CMGI @Ventures
+ f:241              |     1 |   5100000 | Nordic Venture Partners
+ f:243              |     1 |   7000000 | North Bridge Venture Partners
+ f:283              |     1 |  15000000 | Hercules Technology Growth Capital
+ f:319              |     1 |  12800000 | European Founders Fund
+ f:346              |     1 |  34000000 | Advent Venture Partners
+ f:367              |     1 |  30000000 | Intel Capital
+ f:378              |     1 |   7000000 | .406 Ventures
+ f:391              |     1 |   1000000 | Monster Venture Partners
+ f:392              |     1 |  10000000 | Focus Ventures
+ f:421              |     1 |  25000000 | Firefly3 LLC
+ f:424              |     1 |   3500000 | FCPR Israel Discovery Fund
+ f:439              |     1 |   7000000 | VenFin
+ f:477              |     1 |    500000 | Flywheel Ventures
+ f:519              |     1 |   6100000 | Steamboat Ventures
+ f:529              |     1 |   7000000 | Formative Ventures
+
+----------------------------------------------------------------------------------
+
+--EXTENSION QUESTIONS --
+
+--1. What is the total amount of money invested in startups that were acquired or had an IPO?
+--Label 25
+--The total amount of money invested in successful startups
+
+    sum     
+------------
+ 3995950000
+
+----------------------------------------------------------------------------------
+
+--2. What is the average amount of money invested in startups that ended up closing?
+--Label 26
+--All the entities from startups where it only lists the startups, and not investors, or people
+
+--Label 27
+--All the startups who didn't go public, or who haven't gone public yet
+
+--Label 28
+--All the startups where they closed 
+
+--Label 29
+--All the startups that closed, and did not go public at all
+
+--Label 30
+--All the closed startups, as well as the investors that invested in them
+
+--Label 31
+--The closed startup, and the total amount of money that was invested in their startup
+
+ entity_id |   sum    
+-----------+----------
+ c:101     |  5000000
+ c:112     |  4000000
+ c:139     |  2000000
+ c:190     | 11500000
+ c:199     | 11200000
+ c:21      |  5000000
+ c:281     | 15000000
+ c:311     |  1000000
+ c:334     |  5500000
+ c:344     | 72000000
+ c:365     | 90000000
+ c:386     |  3500000
+ c:43      |  1000000
+ c:454     | 12500000
+ c:51      |  5000000
+ c:54      |  8700000
+ c:55      | 25000000
+ c:97      | 34000000
+
+--Label 32
+--Average amount invested in a startup that eventually closed
+ average_invested 
+------------------
+ 17327777.7777778
+
+
+----------------------------------------------------------------------------------
+
+--3. Which investors consistently invested in "failed" startups?
+--Label 33
+--Startups that were closed, and the investors that invested in them
+
+--Label 34
+--The investors, and the amount of failed startups they invested in
+
+--Label 35
+
+                 affiliation_name                 | num_failed_investments 
+--------------------------------------------------+------------------------
+ Massachusetts Technology Development Corporation |                      3
+ SAS Investors                                    |                      3
+ CramerOnline                                     |                      3
+ Venture Capital Fund of New England              |                      3
+ CommonAngels                                     |                      3
+ Inflection Point Ventures                        |                      3
+ O'Reilly AlphaTech Ventures                      |                      2
+ Intel Capital                                    |                      2
+ BDC Venture Capital                              |                      2
+ Mangrove Capital Partners                        |                      2
+ Rustic Canyon Partners                           |                      2
+ Storm Ventures                                   |                      2
+ US Venture Partners                              |                      2
+ Labrador Ventures                                |                      2
+ Minor Ventures                                   |                      2
+ GrowthWorks Capital                              |                      2
+ Ventures West                                    |                      1
+ Union Square Ventures                            |                      1
+ Venrock                                          |                      1
+ CA Capital                                       |                      1
+ Evergreen Venture Partners                       |                      1
+ Valhalla Partners                                |                      1
+ Index Ventures                                   |                      1
+ Castile Ventures                                 |                      1
+ Menlo Ventures                                   |                      1
+ Austin Ventures                                  |                      1
+ Windward Ventures                                |                      1
+ Global Catalyst Partners                         |                      1
+ SoftBank Capital                                 |                      1
+ Norwest Venture Partners                         |                      1
+ Sumitomo Bank Venture Fund                       |                      1
+ European Founders Fund                           |                      1
+ North Bridge Venture Partners                    |                      1
+ Point Judith Capital                             |                      1
+ Cardinal Venture Capital                         |                      1
+ The Kinsey Hills Group                           |                      1
+ HaanSoft                                         |                      1
+ The eCoast Angel Network                         |                      1
+ Mission Ventures                                 |                      1
+ TransCosmos                                      |                      1
+

@@ -1,0 +1,322 @@
+csc343h-frozaanr=> \i schema.ddl
+psql:schema.ddl:3: NOTICE:  drop cascades to 7 other objects
+DETAIL:  drop cascades to table startup.startups
+drop cascades to table startup.people
+drop cascades to table startup.degrees
+drop cascades to table startup.offices
+drop cascades to table startup.investments
+drop cascades to table startup.fundingrounds
+drop cascades to table startup.ipos
+DROP SCHEMA
+CREATE SCHEMA
+SET
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+csc343h-frozaanr=> \copy startups(entity_id,affiliation_name,category_code,founded_at,status) from startups.csv
+delimiter ','
+csv header;
+COPY 1998
+
+csc343h-frozaanr=> Select count(*)
+from startups;
+ count
+-------
+  1998
+(1 row)
+
+ entity_id |                      affiliation_name                      |  category_code   | founded_at |   status
+-----------+------------------------------------------------------------+------------------+------------+-------------
+ c:1       | Wetpaint                                                   | web              | 2005-10-17 | operating
+ f:1       | Greylock Partners                                          |                  | 1965-01-01 | operating
+ r:1       | Wikison Wetpaint                                           |                  | 2006-06-01 | live
+ c:2       | AdventNet                                                  | enterprise       | 1996-01-01 | operating
+ f:2       | Omidyar Network                                            |                  | 2004-01-01 | operating
+ p:2       | Ben Elowitz                                                |                  |            | operating
+ c:3       | Zoho                                                       | software         | 2005-09-15 | operating
+ f:3       | Trinity Ventures                                           |                  | 1986-01-01 | operating
+ p:3       | Kevin Flaherty                                             |                  |            | operating
+ r:3       | Photobucket.com                                            |
+
+
+csc343h-frozaanr=> \copy ipos(entity_id,ipo_id,valuation_amount) from ipos.csv
+delimiter ','
+csv header;
+COPY 9
+
+
+csc343h-frozaanr=> Select count(*)
+from ipos;
+ count
+-------
+     9
+(1 row)
+
+
+csc343h-frozaanr=> Select * from ipos
+;
+ entity_id | ipo_id | valuation_amount
+-----------+--------+------------------
+ c:12      |   1310 |      18100000000
+ c:113     |    771 |       1300000000
+ c:161     |    670 |       1641000000
+ c:176     |    661 |       9310000000
+ c:317     |      5 |     100000000000
+ c:325     |    763 |        290000000
+ c:475     |     13 |        235000000
+ c:500     |     29 |        100000000
+ c:541     |    595 |       1600000000
+(9 rows)
+
+
+
+csc343h-frozaanr=> \copy FundingRounds(entity_id,funding_round_id,funded_at,funding_round_tYpe,raised_amount_usd) from funding_rounds.csv
+delimiter ','
+csv header;
+COPY 584
+
+
+csc343h-frozaanr=> Select count(*) fundingrounds
+;
+ fundingrounds
+---------------
+            584
+(1 row)
+
+
+entity_id | funding_round_id | funded_at  | funding_round_type | raised_amount_usd
+-----------+------------------+------------+--------------------+-------------------
+ c:1       |              888 | 2005-10-01 | series-a           |           5250000
+ c:1       |              889 | 2007-01-01 | series-b           |           9500000
+ c:1       |             2312 | 2008-05-19 | series-c+          |          25000000
+ c:4       |                1 | 2006-12-01 | series-b           |           8500000
+ c:4       |               85 | 2005-10-01 | series-a           |           2800000
+ c:5       |                2 | 2004-09-01 | angel              |            500000
+ c:5       |                3 | 2005-05-01 | series-a           |          12700000
+ c:5       |                4 | 2006-04-01 | series-b           |          27500000
+ c:5       |              798 | 2007-10-24 | series-c+          |         240000000
+ c:5       |             1894 | 2007-11-30 | series-c+          |          60000000
+ c:5       |             2197 | 2008-01-15 | series-c+          |          15000000
+ c:5       |             2225 | 2008-05-01 | other              |         100000000
+ c:7       |              225 | 2006-12-01 | angel              |            800000
+ c:9       |                6 | 2007-01-01 | series-a           |           1500000
+ c:9       |                7 | 2007-03-01 | series-b           |          10000000
+ c:12      |              261 | 2007-07-01 | series-a           |           5000000
+ c:12      |             2106 | 2008-05-01 | series-b           |          15000000
+ c:13      |                8 | 2005-12-01 | series-a           |           1500000
+ c:14      |                9 | 2007-05-01 | series-a           |           6300000
+ c:14      |             1808 | 2008-03-16 | series-b           |           6500000
+ c:15      |               10 | 2006-06-01 | angel              |             12000
+ c:15      |               11 | 2007-01-01 | angel              |             40000
+ c:15      |               14 | 2007-06-01 | series-a           |           3710000
+ c:16      |               12 | 2007-06-01 | series-b           |          40000000
+ c:16      |               13 | 2007-06-01 | series-a           |          13500000
+ c:18      |               16 | 2007-01-01 | series-b           |           5700000
+ c:21      |              541 | 2007-08-01 | series-a           |           5000000
+ c:22      |               18 | 2007-06-01 | series-a           |           1500000
+ c:23      |               19 | 2007-05-09 | series-a           |          45000000
+ c:26      |               17 | 2005-06-01 | series-a           |          13200000
+
+csc343h-frozaanr=> \copy investments(entity_id,funding_round_id,investor_object_id) from investments.csv
+delimiter ','
+csv header;
+COPY 998
+
+
+csc343h-frozaanr=> Select count(*) investments
+;
+ investments
+-------------
+          998
+(1 row)
+
+
+
+csc343h-frozaanr=> Select * from investments
+;
+entity_id | funding_round_id | investor_object_id
+-----------+------------------+--------------------
+ c:1       |              888 | f:430
+ c:1       |              888 | f:3
+ c:1       |              889 | f:4
+ c:1       |              889 | f:430
+ c:1       |              889 | f:3
+ c:1       |             2312 | f:262
+ c:1       |             2312 | f:4
+ c:1       |             2312 | f:3
+ c:1       |             2312 | f:430
+ c:4       |                1 | f:1
+ c:4       |                1 | f:2
+ c:4       |               85 | f:1
+ c:4       |               85 | f:2
+ c:4       |               85 | f:4850
+ c:4       |               85 | f:3181
+ c:4       |             3503 | f:123
+ c:4       |             3503 | f:1
+ c:4       |             3503 | f:2
+ c:4       |             3503 | f:1473
+ c:5       |                3 | f:4
+ c:5       |                4 | f:1
+
+csc343h-frozaanr=> \copy people(person_id,first_name,last_name,affiliation_name) from people3.csv
+delimiter ','
+csv header;
+COPY 2843
+
+csc343h-frozaanr=> Select count(*) people
+;
+ people
+--------
+     2843
+(1 row)
+
+
+
+ person_id |    first_name    |          last_name          |                                                                                                   affiliation_name
+-----------+------------------+-----------------------------+-------------------------------------------------
+         2 | Ben              | Elowitz                     | Blue Nile
+         3 | Kevin            | Flaherty                    | Wetpaint
+         4 | Raju             | Vegesna                     | Zoho
+         5 | Ian              | Wenig                       | Zoho
+         6 | Kevin            | Rose                        | i/o Ventures
+         7 | Jay              | Adelson                     | Digg
+         8 | Owen             | Byrne                       | Digg
+         9 | Ron              | Gorodetzky                  | Digg
+        10 | Mark             | Zuckerberg                  | Facebook
+        11 | Dustin           | Moskovitz                   | Facebook
+        12 | Owen             | Van Natta                   | Asana
+        13 | Matt             | Cohler                      | LinkedIn
+        14 | Chris            | Hughes                      | General Catalyst Partners
+        16 | Alex             | Welch                       | C7 Group
+        17 | Darren           | Crystal                     | Photobucket
+        18 | Michael          | Clark                       | Photobucket (Old)
+        19 | Greg             | Wimmer                      | Photobucket
+        20 | Peter            | Foster                      | Photobucket
+        21 | Heather          | Dana                        | Photobucket
+        22 | Peter            | Pham                        | Photobucket, Inc.
+        23 | Scott            | Penberthy                   | Photobucket
+
+
+csc343h-frozaanr=>\copy degrees(person_id,degree_type,subject,institution,graduated_at) from degrees4.csv delimiter ',' csv header;
+
+csc343h-frozaanr=> Select count(*) degrees;
+ degrees
+---------
+     1998
+(1 row)
+
+
+person_id |           degree_type            |                                                            subject       
+                   |                                institution                                 | graduated_at
+-----------+----------------------------------+-----------------------------------------------------------------------
+-------------------+----------------------------------------------------------------------------+--------------
+         2 | BS                               | Electrical Engineering/Computer Science
+                   | University of California, Berkeley                                         | 1994-01-01
+         2 | BS                               | Applied Mathematics
+                   | University of California, Berkeley                                         | 1994-01-01
+         5 | Degree                           | Advanced Business Professional Course
+                   | The Aji Network                                                            | 2005-01-01
+         5 | BS                               | Biology, Psychology
+                   | McGill University                                                          | 1986-01-01
+         8 | BS                               | Computer Science
+                   | Saint Mary's (Canada)                                                      | 1986-01-01
+         8 | MBA                              | Business
+                   | Dalhousie (Canada)                                                         | 1994-01-01
+        13 | BA                               | Music Theory, Computer Science, and Finance
+                   | Yale University                                                            |
+        16 | BA                               | Computer Information Systems
+                   | Colorado State University                                                  |
+        18 | BS                               | Human Communications and Public Affairs
+
+
+
+csc343h-frozaanr=> \copy offices(entity_id,office_id,region,city,zip_code,state_code) from offices3.csv
+delimiter ','
+csv header;
+COPY 480
+
+csc343h-frozaanr=> Select count(*) offices;
+ offices
+---------
+       480
+(1 row)
+
+entity_id | office_id |       region       |              city               |  zip_code  | state_code
+-----------+-----------+--------------------+---------------------------------+------------+------------
+ c:1       |         1 | Seattle            | Seattle                         | 98104      | WA
+ c:3       |         3 | SF Bay             | Pleasanton                      | 94588      | CA
+ c:4       |         4 | SF Bay             | San Francisco                   | 94107      | CA
+ c:5       |         5 | SF Bay             | Menlo Park                      | 94025      | CA
+ c:7       |         7 | SF Bay             | Palo Alto                       | 94301      | CA
+ c:8       |         8 | SF Bay             | San Carlos                      | 94070      | CA
+ c:9       |         9 | Los Angeles        | West Hollywood                  | 90069      | CA
+ c:10      |        10 | Los Angeles        | Culver City                     | 90232      | CA
+ c:11      |        11 | Los Angeles        | Beverly Hills                   | 90210      | CA
+ c:12      |        12 | SF Bay             | San Francisco                   | 94103      | CA
+ c:14      |        14 | SF Bay             | Menlo Park                      |            | CA
+ c:15      |        15 | SF Bay             | San Francisco                   | 94107      | CA
+ c:16      |        16 | San Diego          | San Diego                       | 92127      | CA
+ c:18      |        17 | SF Bay             | Palo Alto                       | 94301      | CA
+ c:19      |        18 | Los Angeles        | Los Angeles                     | 90024      | CA
+ c:20      |        19 | SF Bay             | San Jose                        | 95125      | CA
+ c:22      |        21 | New York           | New York City                   |            | NY
+ c:23      |        22 | New York           | New York                        | 10011-6903 | NY
+ c:25      |        24 | New York           | New York                        | 10036      | NY
+ c:26      |        25 | London             | London                          |            |
+ c:27      |        26 | SF Bay             | Sunnyvale                       | 94089      | CA
+ c:28      |        27 | SF Bay             | San Jose                        | 95134      | CA
+ c:29      |        28 | SF Bay             | Sunnyvale                       | 94089      | CA
+ c:30      |        29 | SF Bay             | San Francisco                   | 94107      | CA
+ c:31      |        30 | SF Bay             | San Francisco                   | 94108      | CA
+ c:32      |        31 | Buckinghamshire    | Buckinghamshire                 | SL7 2AF    |
+ c:34      |        33 | Washington DC      | Vienna                          | 22182      | VA
+ c:35      |        34 | Los Angeles        | Pasadena                        | 91101      | CA
+ c:36      |        35 | Los Angeles        | Culver City                     | 90232      | CA
+ c:38      |        37 | SF Bay             | San Francisco                   | 94102      | CA
+ c:39      |        38 | SF Bay             | palo alto                       | 94301      | CA
+
+
+
+nxsrv:~/csc343db$
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
